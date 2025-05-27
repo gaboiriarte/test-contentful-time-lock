@@ -1,0 +1,38 @@
+{
+  "name": "Time-based Publishing Lock",
+  "description": "Bloquea Guardar/Publicar de 09:00 a 18:00 L-V para roles Member y Developer",
+  "sidebar": {
+    "url": "https://<TU-HOSTING>/time-lock-ext/index.html"
+  },
+  "entryTypes": [
+    "*"
+  ],
+  "parameters": {
+    "instance": {
+      "cutoffHourStart": {
+        "id": "cutoffHourStart",
+        "name": "Start Hour",
+        "type": "Number",
+        "required": true,
+        "default": 9,
+        "helpText": "Hora (0-23) a partir de la cual se permite editar/publicar"
+      },
+      "cutoffHourEnd": {
+        "id": "cutoffHourEnd",
+        "name": "End Hour",
+        "type": "Number",
+        "required": true,
+        "default": 18,
+        "helpText": "Hora (0-23) tras la cual se bloquea editar/publicar"
+      },
+      "rolesToControl": {
+        "id": "rolesToControl",
+        "name": "Roles to Restrict",
+        "type": "Symbol",
+        "required": true,
+        "default": "Member,Developer",
+        "helpText": "Lista CSV de role IDs de espacio a los que aplicar bloqueo"
+      }
+    }
+  }
+}

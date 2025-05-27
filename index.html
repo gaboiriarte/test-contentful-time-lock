@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <script src="https://unpkg.com/contentful-ui-extensions-sdk/dist/cf-extension-api.js"></script>
+  <style>
+    .blocked {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(255, 0, 0, 0.1);
+      text-align: center;
+      padding: 8px;
+      font-weight: bold;
+      z-index: 9999;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    contentfulExtension.init(sdk => {
+      const { cutoffHourStart, cutoffHourEnd, rolesToControl } = sdk.parameters.instance;
+      const allowedRoles = rolesToControl.split(',').map(r => r.trim().toLowerCase());
+      const userRoleId = sdk.spaceMembership.sys.role.sys.id.toLowerCase();
+      console.log('SOY USER ROL ID y ALLOWED ROLES: ', { userRoleId, allowedRoles });
+      // Si no es Member ni Developer, salimos (publicar siempre permitido)
+      if (!allowedRoles.includes(userRoleId)) return;
+
+      const now = new Date();
+      const day = now.getDay();           // 0=Dom,1=Lun,…6=Sáb
+      const hour = now.getHours();
+      const isWeekend = (day === 0 || day === 6);
+      const outsideHours = hour < cutoffHourStart || hour >= cutoffHourEnd;
+
+      if (isWeekend || outsideHours) {
+        // 1) Ocultar botones de Save/Publish
+        const style = document.createElement('style');
+        style.textContent = `
+        [data-test-id="publish-button"],
+        [data-test-id="save-button"] {
+          display: none !important;
+        }
+      `;
+        document.head.appendChild(style);
+
+        // 2) Deshabilitar todos los inputs
+        document.querySelectorAll('input, textarea, select, button')
+          .forEach(el => el.disabled = true);
+
+        // 3) Mostrar notificación y mensaje superpuesto
+        sdk.notifier.error(
+          `🔒 Rol '${userRoleId}' bloqueado fuera de ${cutoffHourStart}:00- ${cutoffHourEnd}:00 y fines de semana`
+        );
+        const msg = document.createElement('div');
+        msg.className = 'blocked';
+        msg.textContent =
+          `No puedes editar ni publicar (rol: ${userRoleId})`;
+        document.body.appendChild(msg);
+      }
+    });
+  </script>
+</body>
+
+</html>
