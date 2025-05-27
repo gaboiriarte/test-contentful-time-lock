@@ -2,7 +2,7 @@
   "name": "Time-based Publishing Lock",
   "description": "Bloquea Guardar/Publicar de 09:00 a 18:00 L-V para roles Member y Developer",
   "sidebar": {
-    "url": "https://<TU-HOSTING>/time-lock-ext/index.html"
+    "url": "https://gaboiriarte.github.io/test-contentful-time-lock/index.html"
   },
   "entryTypes": [
     "*"
